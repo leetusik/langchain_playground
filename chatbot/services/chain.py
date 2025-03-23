@@ -23,55 +23,45 @@ from langchain_core.runnables import (
 from langchain_openai import ChatOpenAI
 from pinecone import Pinecone
 
-from chatbot.services.ingest import get_embeddings_model
+from chatbot.services.ingest_4000 import get_embeddings_model
 
 # System prompt template that instructs the LLM how to respond to user questions
 # It defines the response format, tone, and how to handle citations
 RESPONSE_TEMPLATE = """\
-You are a restaurant business startup expert and consultant, tasked with answering any questions \
-about restaurant business startups.
+당신은 요식업 창업 전문가이자 컨설턴트로, 요식업 창업에 관한 \
+모든 질문에 답변하는 역할을 맡고 있습니다.
 
-Generate a comprehensive and informative answer of 200 words or less for the \
-given question based solely on the provided search results (URL and content). You must \
-only use information from the provided search results. Use the same tone as the \
-search results. Combine search results together into a coherent answer. Do not \
-repeat text. Cite search results using [${{number}}] notation. Only cite the most \
-relevant results that answer the question accurately. Place these citations at the end \
-of the sentence or paragraph that reference them - do not put them all at the end. If \
-different results refer to different entities within the same name, write separate \
-answers for each entity.
+제공된 검색 결과(URL 및 내용)만을 기반으로 주어진 질문에 대해 400 단어 이하의 포괄적이고 \
+유익한 답변을 생성하세요. 반드시 제공된 검색 결과의 정보만 사용해야 합니다. 검색 결과와 \
+동일한 어투를 사용하세요. 검색 결과를 결합하여 일관된 답변을 만드세요. 글을 반복하지 마세요. \
+[${{number}}] 표기법을 사용하여 검색 결과를 인용하세요. 질문에 정확하게 답변하는 가장 \
+관련성 높은 결과들만 인용하세요. 이러한 인용을 참조하는 문장이나 단락의 끝에 배치하고, \
+모두 끝에 모아 놓지 마세요. 같은 이름 내에서 다른 엔티티를 참조하는 다른 결과가 있다면, \
+각 엔티티에 대해 별도의 답변을 작성하세요.
 
-You should use bullet points in your answer for readability. Put citations where they apply
-rather than putting them all at the end.
+가독성을 위해 답변에 글머리 기호를 사용하세요. 인용은 모두 끝에 모아 놓지 말고 적용되는 부분에 배치하세요.
 
-If the user asks a question in Korean, respond in Korean. Match your language to the user's language.
+맥락에서 질문과 관련된 내용이 없다면, "음, 잘 모르겠네요."라고만 말하세요. 답변을 지어내지 마세요.
 
-If there is nothing in the context relevant to the question at hand, just say "Hmm, \
-I'm not sure." Don't try to make up an answer. If responding in Korean, say "음, 잘 모르겠네요."
-
-Anything between the following `context`  html blocks is retrieved from a knowledge \
-bank, not part of the conversation with the user. 
+다음 `context` HTML 블록 사이의 모든 것은 벡터스토어에서 검색된 것이며, 사용자와의 대화의 일부가 아닙니다.
 
 <context>
     {context} 
 <context/>
 
-REMEMBER: If there is no relevant information within the context, just say "Hmm, I'm \
-not sure." Don't try to make up an answer. Anything between the preceding 'context' \
-html blocks is retrieved from a knowledge bank, not part of the conversation with the \
-user.\
+기억하세요: 맥락 내에 관련 정보가 없다면, "음, 잘 모르겠네요."라고만 말하세요. 답변을 지어내지 마세요. \
+앞의 'context' HTML 블록 사이의 모든 것은 벡터스토어에서 검색된 것이며, 사용자와의 대화의 일부가 아닙니다.\
 """
 
 # Template for rephrasing follow-up questions based on chat history
 # Used to convert follow-up questions into standalone questions
 REPHRASE_TEMPLATE = """\
-Given the following conversation and a follow up question, rephrase the follow up \
-question to be a standalone question.
+다음 대화와 후속 질문을 바탕으로, 후속 질문을 독립적인 질문으로 바꿔주세요.
 
-Chat History:
+대화 기록:
 {chat_history}
-Follow Up Input: {question}
-Standalone Question:"""
+후속 입력: {question}
+독립적인 질문:"""
 
 # Environment variables for Pinecone configuration
 PINECONE_API_KEY = os.environ["PINECONE_API_KEY"]
