@@ -12,7 +12,6 @@ from langchain_core.prompts import (
     MessagesPlaceholder,
     PromptTemplate,
 )
-from langchain_core.pydantic_v1 import BaseModel
 from langchain_core.retrievers import BaseRetriever
 from langchain_core.runnables import (
     Runnable,
@@ -22,6 +21,7 @@ from langchain_core.runnables import (
 )
 from langchain_openai import ChatOpenAI
 from pinecone import Pinecone
+from pydantic import BaseModel
 
 from chatbot.services.ingest_4000 import get_embeddings_model
 
@@ -33,7 +33,7 @@ RESPONSE_TEMPLATE = """\
 
 제공된 검색 결과(URL 및 내용)만을 기반으로 주어진 질문에 대해 400 단어 이하의 포괄적이고 \
 유익한 답변을 생성하세요. 반드시 제공된 검색 결과의 정보만 사용해야 합니다. 검색 결과와 \
-동일한 어투를 사용하세요. 검색 결과를 결합하여 일관된 답변을 만드세요. 글을 반복하지 마세요. \
+동일한 문체를 사용하세요. 검색 결과를 결합하여 일관된 답변을 만드세요. 글을 반복하지 마세요. \
 [${{number}}] 표기법을 사용하여 검색 결과를 인용하세요. 질문에 정확하게 답변하는 가장 \
 관련성 높은 결과들만 인용하세요. 이러한 인용을 참조하는 문장이나 단락의 끝에 배치하고, \
 모두 끝에 모아 놓지 마세요. 같은 이름 내에서 다른 엔티티를 참조하는 다른 결과가 있다면, \
@@ -60,7 +60,7 @@ REPHRASE_TEMPLATE = """\
 
 대화 기록:
 {chat_history}
-후속 입력: {question}
+후속 질문: {question}
 독립적인 질문:"""
 
 # Environment variables for Pinecone configuration
