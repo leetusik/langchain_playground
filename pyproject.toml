@@ -11,5 +11,5 @@ dependencies = [
     "langchain-openai>=0.3.32",
     "langchain-postgres>=0.0.15",
     "pgvector>=0.3.6",
-    "psycopg>=3.2.10",
+    "psycopg-binary>=3.2.10",
 ]
