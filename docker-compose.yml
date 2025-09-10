@@ -1,7 +1,8 @@
 version: "3.8"
 services:
     db:
-        image: postgres:16-alpine
+        # Use an image that includes the pgvector extension
+        image: pgvector/pgvector:pg16
         restart: unless-stopped
         environment:
             - POSTGRES_USER=${POSTGRES_USER}
