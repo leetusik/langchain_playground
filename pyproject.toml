@@ -8,6 +8,7 @@ dependencies = [
     "ipykernel>=7.1.0",
     "langchain>=1.2.7",
     "langchain-google-genai>=4.2.0",
+    "langchain-ollama>=1.0.1",
     "langchain-openai>=1.1.7",
     "langfuse>=3.12.1",
     "protobuf>=6.33.5",
