@@ -1,0 +1,15 @@
+[project]
+name = "langchain-playground"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "ipykernel>=7.1.0",
+    "langchain>=1.2.7",
+    "langchain-google-genai>=4.2.0",
+    "langchain-openai>=1.1.7",
+    "langfuse>=3.12.1",
+    "protobuf>=6.33.5",
+    "python-dotenv>=1.2.1",
+]
